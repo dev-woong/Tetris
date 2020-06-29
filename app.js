@@ -1,6 +1,10 @@
 const blockSize = 30
-let positionX = 0
-let positionY = 0
+
+let blockSts = {
+  x: 0,
+  y: 0,
+  rotate: 0,
+}
 
 const color = {
   gray: "#7a7a7a",
@@ -37,7 +41,7 @@ const keyCode = {
 const drawBlock = (row, col, color) => {
   let ctx = document.getElementById("myCanvas").getContext("2d")
   ctx.fillStyle = color
-  ctx.fillRect(row * blockSize, col * blockSize, blockSize, blockSize)
+  ctx.fillRect(row * blockSize + 1, col * blockSize + 1, blockSize - 2, blockSize - 2)
 }
 
 //key event
@@ -49,7 +53,7 @@ onkeydown = function () {
   } else if (event.keyCode == keyCode.right) {
     drawBlock(0, 0, color.skyblue)
   } else if (event.keyCode == keyCode.down) {
-    moveDown(positionX, positionY)
+    moveDown(blockSts.x, blockSts.y)
   }
 }
 
@@ -63,11 +67,12 @@ const createBlock = (positionX, positionY) => {
 const moveDown = (positionX, positionY) => {
   drawBlock(positionX, positionY, color.black)
   drawBlock(positionX + 1, positionY, color.black)
-  positionY++
-  drawBlock(positionX, positionY + 1, color.yellow)
-  drawBlock(positionX + 1, positionY + 1, color.yellow)
+  drawBlock(positionX, positionY + 2, color.yellow)
+  drawBlock(positionX + 1, positionY + 2, color.yellow)
+  blockSts.y++
 }
 
-positionX = 4
-positionY = 0
-createBlock(positionX, positionY)
+;(function () {
+  blockSts.x = 4
+  createBlock(blockSts.x, blockSts.y)
+})()
