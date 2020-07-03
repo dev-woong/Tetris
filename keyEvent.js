@@ -9,36 +9,42 @@ const keyCode = {
 
 onkeydown = function () {
   if (event.keyCode == keyCode.left) {
-    pressKey("left")
+    if (noObstacleLeft()) {
+      moveBlock(blockSts.x, blockSts.y, 0)
+      blockSts.x--
+      moveBlock(blockSts.x, blockSts.y, 1)
+    }
   } else if (event.keyCode == keyCode.up) {
-    pressKey("up")
-  } else if (event.keyCode == keyCode.right) {
-    pressKey("right")
-  } else if (event.keyCode == keyCode.down) {
-    pressKey("down")
-  }
-}
-
-const pressKey = (key) => {
-  if (key === "down") {
-    moveBlock(blockSts.x, blockSts.y, 0)
-    blockSts.y++
-    moveBlock(blockSts.x, blockSts.y, 1)
-  } else if (key === "left") {
-    moveBlock(blockSts.x, blockSts.y, 0)
-    blockSts.x--
-    moveBlock(blockSts.x, blockSts.y, 1)
-  } else if (key === "right") {
-    moveBlock(blockSts.x, blockSts.y, 0)
-    blockSts.x++
-    moveBlock(blockSts.x, blockSts.y, 1)
-  } else {
     moveBlock(blockSts.x, blockSts.y, 0)
     blockSts.rotatoin++
     moveBlock(blockSts.x, blockSts.y, 1)
+  } else if (event.keyCode == keyCode.right) {
+    if (noObstacleRight()) {
+      moveBlock(blockSts.x, blockSts.y, 0)
+      blockSts.x++
+      moveBlock(blockSts.x, blockSts.y, 1)
+    }
+  } else if (event.keyCode == keyCode.down) {
+    if (noObstacleBelow()) {
+      moveBlock(blockSts.x, blockSts.y, 0)
+      blockSts.y++
+      moveBlock(blockSts.x, blockSts.y, 1)
+    } else {
+      console.log(checkLineIsFull())
+      createBlock()
+    }
   }
 }
 
-// const rotate = (positionX, positionY, rotetion) => {
-//   block_T(positionX, positionY, blockSts.rotatoin, 0)
-// }
+onclick = () => {
+  let x = event.clientX
+  let y = event.clientY
+  var coord = " X : " + x + ", Y : " + y
+  const canvas = document.getElementById("myCanvas")
+  const ctx = canvas.getContext("2d")
+  let tempColor = ctx.getImageData(x - 20, y, 1, 1).data
+  console.log(tempColor[0] === 0 && tempColor[1] === 0 && tempColor[2] === 0)
+  console.log(tempColor)
+
+  document.getElementById("mouseLocation").innerHTML = tempColor
+}
