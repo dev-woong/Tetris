@@ -7,6 +7,10 @@ let blockSts = {
   type: "O",
 }
 
+let status = {
+  score: 0,
+}
+
 const randomBlock = () => {
   let rand = Math.floor(Math.random() * 7)
   if (rand === 0) {
@@ -48,6 +52,14 @@ const blockColor = {
   I: color.skyblue,
 }
 
+const initialize = () => {
+  for (let i = 0; i < 10; i++) {
+    for (let j = 0; j < 20; j++) {
+      drawBlock(i, j, color.black)
+    }
+  }
+}
+
 const drawBlock = (row, col, color) => {
   let ctx = document.getElementById("myCanvas").getContext("2d")
   ctx.fillStyle = color
@@ -87,6 +99,14 @@ const moveBlock = (row, col, moveAfter) => {
   }
 }
 
+const dropDownBlock = () => {
+  moveBlock(blockSts.x, blockSts.y, 0, blockSts.type)
+  while (noObstacleBelow() === true) {
+    blockSts.y++
+  }
+  moveBlock(blockSts.x, blockSts.y, 1, blockSts.type)
+}
+
 const checkLineIsFull = () => {
   let arr = []
   for (let i = 0; i < 20; i++) {
@@ -97,6 +117,33 @@ const checkLineIsFull = () => {
     }
   }
   if (typeof arr[0] !== "undefined") return arr
+}
+
+const lineDown = (col) => {
+  let ctx = document.getElementById("myCanvas").getContext("2d")
+  for (col; col > 0; col--) {
+    for (let i = 0; i < 10; i++) {
+      let imageData = ctx.getImageData(
+        i * blockSize + 1,
+        (col - 1) * blockSize + 1,
+        blockSize - 2,
+        blockSize - 2
+      )
+      ctx.putImageData(imageData, i * blockSize + 1, col * blockSize + 1)
+    }
+  }
+}
+
+const deleteLine = () => {
+  let arr = checkLineIsFull()
+  if (typeof arr !== "undefined") {
+    for (let n in arr) {
+      lineDown(arr[n])
+      n = n * 1
+      status.score += (n + 1) * 100
+    }
+    document.getElementById("score").innerHTML = status.score
+  }
 }
 
 const block_O = (row, col, moveAfter) => {
@@ -220,7 +267,7 @@ const block_I = (row, col, moveAfter) => {
   }
 }
 
-const noObstacleBelow = function () {
+const noObstacleBelow = () => {
   const type = blockSts.type
   const rote = blockSts.rotatoin
   if (type === "O") {
@@ -257,7 +304,9 @@ const noObstacleBelow = function () {
         isBlockBlack(blockSts.x + 1, blockSts.y + 2)
       )
     } else if (rote % 4 === 1) {
-      return isBlockBlack(blockSts.x - 1, blockSts.y + 3) & isBlockBlack(blockSts.x, blockSts.y + 3)
+      return (
+        isBlockBlack(blockSts.x - 1, blockSts.y + 3) && isBlockBlack(blockSts.x, blockSts.y + 3)
+      )
     } else if (rote % 4 === 2) {
       return (
         isBlockBlack(blockSts.x - 1, blockSts.y + 1) &&
@@ -277,7 +326,9 @@ const noObstacleBelow = function () {
         isBlockBlack(blockSts.x + 1, blockSts.y + 2)
       )
     } else if (rote % 4 === 1) {
-      return isBlockBlack(blockSts.x - 1, blockSts.y + 1) & isBlockBlack(blockSts.x, blockSts.y + 3)
+      return (
+        isBlockBlack(blockSts.x - 1, blockSts.y + 1) && isBlockBlack(blockSts.x, blockSts.y + 3)
+      )
     } else if (rote % 4 === 2) {
       return (
         isBlockBlack(blockSts.x - 1, blockSts.y + 2) &&
@@ -308,7 +359,7 @@ const noObstacleBelow = function () {
       )
     } else {
       return (
-        isBlockBlack(blockSts.x - 1, blockSts.y + 3) && isBlockBlack(blockSts.x, blockSts.y + 2)
+        isBlockBlack(blockSts.x, blockSts.y + 3) && isBlockBlack(blockSts.x + 1, blockSts.y + 2)
       )
     }
   } else {
@@ -323,10 +374,9 @@ const noObstacleBelow = function () {
       return isBlockBlack(blockSts.x, blockSts.y + 4)
     }
   }
-  return false
 }
 
-const noObstacleLeft = function () {
+const noObstacleLeft = () => {
   const type = blockSts.type
   const rote = blockSts.rotatoin
   if (type === "O") {
@@ -429,10 +479,9 @@ const noObstacleLeft = function () {
       )
     }
   }
-  return false
 }
 
-const noObstacleRight = function () {
+const noObstacleRight = () => {
   const type = blockSts.type
   const rote = blockSts.rotatoin
   if (type === "O") {
@@ -535,5 +584,94 @@ const noObstacleRight = function () {
       )
     }
   }
-  return false
+}
+
+const rotatable = () => {
+  const type = blockSts.type
+  const rote = blockSts.rotatoin
+  if (type === "Z") {
+    if (rote % 2 === 0) {
+      return (
+        isBlockBlack(blockSts.x - 1, blockSts.y + 1) && isBlockBlack(blockSts.x - 1, blockSts.y + 2)
+      )
+    } else {
+      return (
+        isBlockBlack(blockSts.x - 1, blockSts.y) && isBlockBlack(blockSts.x + 1, blockSts.y + 1)
+      )
+    }
+  } else if (type === "S") {
+    if (rote % 2 === 0) {
+      return isBlockBlack(blockSts.x - 1, blockSts.y) && isBlockBlack(blockSts.x, blockSts.y + 2)
+    } else {
+      return isBlockBlack(blockSts.x, blockSts.y) && isBlockBlack(blockSts.x + 1, blockSts.y)
+    }
+  } else if (type === "J") {
+    if (rote % 4 === 0) {
+      return (
+        isBlockBlack(blockSts.x, blockSts.y) &&
+        isBlockBlack(blockSts.x - 1, blockSts.y + 2) &&
+        isBlockBlack(blockSts.x, blockSts.y + 2)
+      )
+    } else if (rote % 4 === 1) {
+      return (
+        isBlockBlack(blockSts.x - 1, blockSts.y) &&
+        isBlockBlack(blockSts.x + 1, blockSts.y) &&
+        isBlockBlack(blockSts.x + 1, blockSts.y + 1)
+      )
+    } else if (rote % 4 === 2) {
+      return (
+        isBlockBlack(blockSts.x - 1, blockSts.y + 1) && isBlockBlack(blockSts.x - 1, blockSts.y + 2)
+      )
+    } else {
+      return (
+        isBlockBlack(blockSts.x, blockSts.y + 1) && isBlockBlack(blockSts.x + 1, blockSts.y + 1)
+      )
+    }
+  } else if (type === "L") {
+    if (rote % 4 === 0) {
+      return (
+        isBlockBlack(blockSts.x - 1, blockSts.y) &&
+        isBlockBlack(blockSts.x, blockSts.y) &&
+        isBlockBlack(blockSts.x, blockSts.y + 2)
+      )
+    } else if (rote % 4 === 1) {
+      return (
+        isBlockBlack(blockSts.x - 1, blockSts.y + 1) && isBlockBlack(blockSts.x + 1, blockSts.y)
+      )
+    } else if (rote % 4 === 2) {
+      return (
+        isBlockBlack(blockSts.x - 1, blockSts.y + 2) && isBlockBlack(blockSts.x, blockSts.y + 2)
+      )
+    } else {
+      return (
+        isBlockBlack(blockSts.x, blockSts.y + 1) &&
+        isBlockBlack(blockSts.x + 1, blockSts.y + 1) &&
+        isBlockBlack(blockSts.x + 1, blockSts.y)
+      )
+    }
+  } else if (type === "T") {
+    if (rote % 4 === 0) {
+      return isBlockBlack(blockSts.x, blockSts.y + 2)
+    } else if (rote % 4 === 1) {
+      return isBlockBlack(blockSts.x + 1, blockSts.y + 1)
+    } else if (rote % 4 === 2) {
+      return isBlockBlack(blockSts.x, blockSts.y)
+    } else {
+      return isBlockBlack(blockSts.x - 1, blockSts.y + 1)
+    }
+  } else {
+    if (rote % 2 === 0) {
+      return (
+        isBlockBlack(blockSts.x, blockSts.y + 1) &&
+        isBlockBlack(blockSts.x, blockSts.y + 2) &&
+        isBlockBlack(blockSts.x, blockSts.y + 3)
+      )
+    } else {
+      return (
+        isBlockBlack(blockSts.x - 1, blockSts.y) &&
+        isBlockBlack(blockSts.x + 1, blockSts.y) &&
+        isBlockBlack(blockSts.x + 2, blockSts.y)
+      )
+    }
+  }
 }

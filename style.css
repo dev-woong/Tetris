@@ -1,13 +1,92 @@
 body {
   background-color: #0c0d0c;
+  justify-content: center;
+  display: flex;
 }
 
 #myCanvas {
   background-color: #0c0d0c;
   border: 1px solid #f0f0f0;
-  margin: 10px 0px 0px 10px;
+  margin: 10px;
 }
 
-#mouseLocation {
+#nextBlock {
+  height: 250px;
+  width: 180px;
+  margin: 10px;
+  background-color: #0c0d0c;
+  border: 1px solid #f0f0f0;
+}
+
+.scoreBoard {
   color: #f0f0f0;
+  display: flex;
+  flex-direction: column;
+  margin: 10px;
+}
+.scoreBoard h1 {
+  margin: 0px;
+  size: 1.5em;
+}
+.scoreBoard p {
+  border: 1px solid #f0f0f0;
+  border-radius: 5px;
+  margin: 0px;
+  padding: 8px 16px;
+  text-align: right;
+}
+
+#btnStart {
+  background-color: #c47135;
+  border: none;
+  color: #f0f0f0;
+  cursor: pointer;
+  display: inline-block;
+  font-family: "BenchNine", Arial, sans-serif;
+  font-size: 1em;
+  font-size: 22px;
+  line-height: 1em;
+  margin: 15px 25px;
+  outline: none;
+  padding: 12px 40px 10px;
+  position: relative;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+#btnStart:before,
+#btnStart:after {
+  border-color: transparent;
+  -webkit-transition: all 0.25s;
+  transition: all 0.25s;
+  border-style: solid;
+  border-width: 0;
+  content: "";
+  height: 24px;
+  position: absolute;
+  width: 24px;
+}
+#btnStart:before {
+  border-color: #c47135;
+  border-right-width: 2px;
+  border-top-width: 2px;
+  right: -5px;
+  top: -5px;
+}
+#btnStart:after {
+  border-bottom-width: 2px;
+  border-color: #c47135;
+  border-left-width: 2px;
+  bottom: -5px;
+  left: -5px;
+}
+#btnStart:hover,
+#btnStart.hover {
+  background-color: #c47135;
+}
+#btnStart:hover:before,
+#btnStart.hover:before,
+#btnStart:hover:after,
+#btnStart.hover:after {
+  height: 100%;
+  width: 100%;
 }
