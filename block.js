@@ -9,6 +9,9 @@ let blockSts = {
 
 let status = {
   score: 0,
+  start: false,
+  level: 1,
+  speed: 1000,
 }
 
 const randomBlock = () => {
@@ -58,6 +61,12 @@ const initialize = () => {
       drawBlock(i, j, color.black)
     }
   }
+  status.score = 0
+  status.level = 1
+  status.speed = 1000
+  document.getElementsByClassName("viewPhraseGameOver")[0].style.display = "none"
+  clearInterval(startTimeout)
+  startTimeout = setInterval(downBlock, status.speed)
 }
 
 const drawBlock = (row, col, color) => {
@@ -76,8 +85,32 @@ const createBlock = () => {
   blockSts.x = 4
   blockSts.y = 0
   blockSts.rotatoin = 0
+
   randomBlock()
   moveBlock(blockSts.x, blockSts.y, 1, blockSts.type)
+  if (noObstacleBelow() === false) {
+    gameOver()
+  }
+}
+
+const downBlock = () => {
+  if (status.start === true) {
+    if (noObstacleBelow()) {
+      moveBlock(blockSts.x, blockSts.y, 0)
+      blockSts.y++
+      moveBlock(blockSts.x, blockSts.y, 1)
+    } else {
+      deleteLine()
+      createBlock()
+    }
+  }
+}
+
+let startTimeout = setInterval(downBlock, status.speed)
+
+const gameOver = () => {
+  status.start = false
+  document.getElementsByClassName("viewPhraseGameOver")[0].style.display = "block"
 }
 
 const moveBlock = (row, col, moveAfter) => {
@@ -142,7 +175,17 @@ const deleteLine = () => {
       n = n * 1
       status.score += (n + 1) * 100
     }
+    status.level = parseInt(status.score / 1000) + 1
+    if (status.level < 10) {
+      status.speed = 1000 - status.level * 100
+    } else {
+      status.speed = parseInt(100 - (status.level % 10) * 10)
+    }
+    console.log("speed : " + status.speed)
     document.getElementById("score").innerHTML = status.score
+    document.getElementById("level").innerHTML = status.level
+    clearInterval(startTimeout)
+    startTimeout = setInterval(downBlock, status.speed)
   }
 }
 
