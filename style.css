@@ -18,22 +18,41 @@ body {
   border: 1px solid #f0f0f0;
 }
 
-.scoreBoard {
+.scoreBoard,
+.level {
   color: #f0f0f0;
   display: flex;
   flex-direction: column;
   margin: 10px;
 }
-.scoreBoard h1 {
+.scoreBoard h1,
+.level h1 {
   margin: 0px;
   size: 1.5em;
 }
-.scoreBoard p {
+.scoreBoard p,
+.level p {
   border: 1px solid #f0f0f0;
   border-radius: 5px;
   margin: 0px;
   padding: 8px 16px;
   text-align: right;
+}
+
+.viewPhraseGameOver {
+  display: block;
+  position: fixed;
+  background-color: beige;
+  top: 280px;
+  /* left: 300px; */
+  width: 500px;
+  opacity: 50%;
+}
+
+.viewPhraseGameOver h1 {
+  font-size: 40px;
+  text-align: center;
+  font-family: fantasy;
 }
 
 #btnStart {
